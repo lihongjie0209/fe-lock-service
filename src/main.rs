@@ -107,7 +107,7 @@ async fn main() -> std::io::Result<()> {
 
     let bind_addr = format!("{}:{}", config.server_host, config.server_port);
     info!("Server starting on http://{}", bind_addr);
-    info!("Swagger UI available at http://{}/swagger-ui/", bind_addr);
+    info!("Swagger UI available at http://{}/api/swagger-ui/", bind_addr);
 
     // 启动 HTTP 服务
     HttpServer::new(move || {
@@ -117,12 +117,15 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .app_data(web::Data::new(storage.clone()))
             .service(
-                SwaggerUi::new("/swagger-ui/{_:.*}")
-                    .url("/api-docs/openapi.json", openapi.clone())
+                web::scope("/api")
+                    .service(
+                        SwaggerUi::new("/swagger-ui/{_:.*}")
+                            .url("/api-docs/openapi.json", openapi.clone())
+                    )
+                    .route("/lock/acquire", web::post().to(handlers::acquire_lock))
+                    .route("/lock/heartbeat", web::post().to(handlers::heartbeat))
+                    .route("/lock/release", web::post().to(handlers::release_lock))
             )
-            .route("/api/lock/acquire", web::post().to(handlers::acquire_lock))
-            .route("/api/lock/heartbeat", web::post().to(handlers::heartbeat))
-            .route("/api/lock/release", web::post().to(handlers::release_lock))
     })
     .bind(&bind_addr)?
     .run()
