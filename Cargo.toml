@@ -1,0 +1,23 @@
+[package]
+name = "fe-lock-service"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-web = "4.5"
+actix-rt = "2.9"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.36", features = ["full", "fs"] }
+uuid = { version = "1.7", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
+log = "0.4"
+env_logger = "0.11"
+anyhow = "1.0"
+thiserror = "1.0"
+parking_lot = "0.12"
+async-trait = "0.1"
+dashmap = "6.1"
+utoipa = { version = "4.2", features = ["actix_extras", "chrono", "uuid"] }
+utoipa-swagger-ui = { version = "6.0", features = ["actix-web"] }
